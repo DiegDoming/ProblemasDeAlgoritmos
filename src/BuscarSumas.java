@@ -19,23 +19,24 @@ public class BuscarSumas {
     public static void findSumas(int[] vector, int objetivo){
         //Cada elemento lo añadimos al HashMap, con una Key igual al valor que necesita para alcanzar el objetivo.
         //Si el valor ya esta, lo notificamos
-        HashMap<Integer,Integer> hashMap = new HashMap<Integer,Integer>();
+        HashMap<Integer,Integer> hashMap = new HashMap<>();
         int pareja;
         int valorVectorI;
-        for(int i = 0; i < vector.length; i++){
+        for (int j : vector) {
             //Sacamos el acceso a vector a una variable para reducir accesos a vector.
-            valorVectorI = vector[i];
+            valorVectorI = j;
             //Key, Value
-            hashMap.put(objetivo - valorVectorI,valorVectorI);
+            hashMap.put(objetivo - valorVectorI, valorVectorI);
         }
 
-        for(int i = 0; i < vector.length; i++){
+        for (int j : vector) {
             //Sacamos el acceso a vector a una variable para reducir accesos a vector.
-            valorVectorI = vector[i];
+            valorVectorI = j;
             try {
                 pareja = hashMap.get(valorVectorI);
                 System.out.println("(" + valorVectorI + "," + pareja + ")");
-            }catch(Exception e){}
+            } catch (Exception ignored) {
+            }
         }
 
         //Tanto añadir como eliminar elementos de un HashMap es de O(1).
