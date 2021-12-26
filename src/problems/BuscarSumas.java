@@ -1,3 +1,5 @@
+package problems;
+
 import java.util.HashMap;
 
 /**
@@ -10,7 +12,7 @@ public class BuscarSumas {
      *
      * Suponemos que siempre podemos encontrar la suma en la Lista.<p>
      *
-     * La funcion imprime dos veces la misma combinacion, cada vez en una direccion<p>
+     * La funcion imprime dos veces la misma combinacion, cada vez en una direccion.<p>
      * Ej. (x,y) y luego (y,x).<p>
      *
      * @param vector Lista de elementos entre los que vamos a buscar una suma.
@@ -35,8 +37,7 @@ public class BuscarSumas {
             try {
                 pareja = hashMap.get(valorVectorI);
                 System.out.println("(" + valorVectorI + "," + pareja + ")");
-            } catch (Exception ignored) {
-            }
+            } catch (Exception ignored) {}
         }
 
         //Tanto añadir como eliminar elementos de un HashMap es de O(1).
