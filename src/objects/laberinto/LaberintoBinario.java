@@ -159,9 +159,9 @@ public class LaberintoBinario {
     }
 
     /**
-     * Convierte la matriz de booleanos a string
-     * ◼ --> Navegable <p>
-     * ◻ --> Pared
+     * Convierte la matriz de booleanos a string <p>
+     * ◼ : Navegable <p>
+     * ◻ :Pared
      * @return String del laberinto
      */
     @Override
