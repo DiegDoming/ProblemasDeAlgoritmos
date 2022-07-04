@@ -49,9 +49,9 @@ public class Sudoku {
     }
 
     public static void printMatrix(int[][] matrix){
-        for (int i = 0; i < matrix.length; i++) {
-            for (int j = 0; j < matrix[i].length; j++) {
-                System.out.print(matrix[i][j] + " ");
+        for (int[] ints : matrix) {
+            for (int anInt : ints) {
+                System.out.print(anInt + " ");
             }
             System.out.println();
         }
@@ -123,8 +123,8 @@ public class Sudoku {
 
         for(int i = 1; i <= 9; i++){
             boolean esta = false;
-            for(int f = 0; f < tablero.length; f++)
-                if(tablero[f][columna] == i){
+            for (int[] ints : tablero)
+                if (ints[columna] == i) {
                     esta = true;
                     break;
                 }

@@ -16,7 +16,7 @@ public class PermutacionesCadena {
             return;
         }
         for(int i = 0; i < cola.length(); i++) {
-            permutacionesDeCadena(cabeza + cola.substring(i, i+1), cola.substring(0, i).concat(cola.substring(i + 1)));
+            permutacionesDeCadena(cabeza + cola.charAt(i), cola.substring(0, i).concat(cola.substring(i + 1)));
         }
     }
 
