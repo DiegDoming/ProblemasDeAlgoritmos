@@ -1,6 +1,5 @@
 package problems.subcadenas;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -28,16 +27,21 @@ import java.util.Arrays;
  */
 public class BuscarSubcadenas {
     public static void main(String[] args){
-        Arrays.toString(longestPrefix(new String[]{"aab", "bc", "c", "aba", "aa", "aaac", "cba", "acba","bb","bb"}));
+
+        //TODO Estas dos llamadas se pueden hacer en paralelo
+        longestSubstring(new String[]{"aaaaac","bcbaac","aaa", "aacdbcdd","ddadbjaa"});
+
+        System.out.println("Ejecutando al revés");
+        longestSubstring(new String[]{"caaaaa","caabcb","aaa","ddcbdcaa","aajbdadd"});
     }
     /**
      * Ejecuta el problema.<p>
-     * La complejidad de esta resolución se estima de <code>O(nln(n))</code>.<p>
+     * La complejidad de esta resolución se estima de <code>O(n^2ln(n))</code>.<p>
      * Este dato es puramente especulativo.
      * @param palabras Vector de palabras sobre las que se busca los prefijos más largos.
      * @return Vector de prefijos más largos.
      */
-    public static String[] longestPrefix(String[] palabras){
+    public static String[] longestSubstring(String[] palabras){
         SubcadenaNode padre = new SubcadenaNode();
         SubcadenaNode actual;
         for(String s: palabras) {
@@ -47,16 +51,18 @@ public class BuscarSubcadenas {
             }
         }
         SubcadenaNode nuevoArbol = new SubcadenaNode();
-        String[] a;
-        while(true){
-            a = padre.nextTree(nuevoArbol);
-            if(a[0].isEmpty())
+        do {
+            String[] a = padre.nextTree(nuevoArbol);
+            if (a.length == 0 || a[0].isEmpty())
                 break;
             System.out.println(Arrays.toString(a));
+
             padre = nuevoArbol;
             nuevoArbol = new SubcadenaNode();
-        }
+        } while (true);
+
 
         return null;
     }
+
 }

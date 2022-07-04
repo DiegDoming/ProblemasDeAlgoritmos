@@ -1,7 +1,5 @@
 package problems.subcadenas;
 
-import problems.prefijos.PrefijoNode;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -93,8 +91,7 @@ public class SubcadenaNode {
                     addSonRecIni(key,nuevoArbol);
             }
         }
-        if(!valid) {
-            if(tmp.length() != 1)
+        if(!valid && tmp.length() != 1) {
                 salidas.add(tmp);
         }
         return salidas;
