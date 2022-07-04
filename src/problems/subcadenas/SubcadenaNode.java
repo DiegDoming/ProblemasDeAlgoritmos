@@ -87,9 +87,8 @@ public class SubcadenaNode {
                 valid = true;
                 salidas.addAll(value.toArrayComplex(tmp + key,nuevoArbol));
             }else{
-                if(tmp.length() == 1 && !hasValidSon()) {
+                if(tmp.length() == 1 && !hasValidSon())
                     addSonRecIni(key, nuevoArbol.addSon(tmp.charAt(0)));
-                }
                 else
                     addSonRecIni(key,nuevoArbol);
             }
@@ -98,42 +97,6 @@ public class SubcadenaNode {
             if(tmp.length() != 1)
                 salidas.add(tmp);
         }
-        return salidas;
-    }
-
-    /**
-     * Dado un Nodo, obtiene todos sus posibles combinaciones de hijos.<p>
-     * Todas estas combinaciones cumplen la condición de que aparece más de una vez su prefijo.
-     * @return Vector de Prefijos.
-     */
-    public String[] toArray(){
-        String tmp = "";
-        return toArrayComplex(tmp).toArray(new String[0]);
-    }
-
-    /**
-     * Recorre el Arbol, hasta llegar a un Nodo sin hijos, o en el que todos los elementos son  <code>False</code>.
-     * @param tmp String acumulado del paso anterior
-     * @return Lista con los elementos encontrados.
-     */
-    private List<String> toArrayComplex(String tmp){
-        List<String> salidas = new ArrayList<>();
-        boolean valid = false;
-        if(hijos.isEmpty()){
-            salidas.add(tmp);
-            return salidas;
-        }
-        for (Map.Entry<Character, SubcadenaNode> entry : hijos.entrySet()) {
-            Character key = entry.getKey();
-            SubcadenaNode value = entry.getValue();
-            if (value.check) {
-                valid = true;
-                salidas.addAll(value.toArrayComplex(tmp + key));
-            }
-        }
-        if(!valid)
-            if(tmp.length() != 1)
-                salidas.add(tmp);
         return salidas;
     }
 }
