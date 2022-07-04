@@ -27,7 +27,7 @@ import java.util.Arrays;
  */
 public class BuscarSubcadenas {
     public static void main(String[] args){
-        System.out.println(Arrays.toString(longestPrefix(new String[]{"aab", "bc", "c", "aba", "aa", "aaac", "cba", "acba"})));
+        System.out.println(Arrays.toString(longestPrefix(new String[]{"aab", "bc", "c", "aba", "aa", "aaac", "cba", "acba","bb","bb"})));
     }
     /**
      * Ejecuta el problema.<p>
@@ -46,8 +46,20 @@ public class BuscarSubcadenas {
             }
         }
         SubcadenaNode nuevoArbol = new SubcadenaNode();
+        SubcadenaNode nuevoArbol2 = new SubcadenaNode();
+        SubcadenaNode nuevoArbol3 = new SubcadenaNode();
         String[] a = padre.nextTree(nuevoArbol);
-        System.out.println(Arrays.toString(nuevoArbol.toArray()));
+        if(a.length != 0)
+            System.out.println(Arrays.toString(a));
+
+        String[] b = nuevoArbol.nextTree((nuevoArbol2));
+        if(b.length != 0)
+            System.out.println(Arrays.toString(b));
+
+        String[] c = nuevoArbol2.nextTree(nuevoArbol3);
+        if(c.length != 0)
+            System.out.println(Arrays.toString(c));
+
         return a;
     }
 }

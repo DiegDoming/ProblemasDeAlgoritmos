@@ -40,14 +40,13 @@ public class SubcadenaNode {
         return son;
     }
 
-    private void addSonRecIni(char c, SubcadenaNode nextTree, int len){
+    private void addSonRecIni(char c, SubcadenaNode nextTree){
         hijos.get(c).addSonRec(nextTree.addSon(c));
     }
 
     private void addSonRec(SubcadenaNode nextTree){
         for (Map.Entry<Character, SubcadenaNode> entry : hijos.entrySet()) {
             Character key = entry.getKey();
-            System.out.println("\tSON: " + key);
             hijos.get(key).addSonRec(nextTree.addSon(key));
         }
     }
@@ -66,7 +65,7 @@ public class SubcadenaNode {
      */
     public String[] nextTree(SubcadenaNode nuevoArbol){
         String tmp = "";
-        return toArrayComplex(tmp, nuevoArbol, this).toArray(new String[0]);
+        return toArrayComplex(tmp, nuevoArbol).toArray(new String[0]);
     }
 
     /**
@@ -74,7 +73,7 @@ public class SubcadenaNode {
      * @param tmp String acumulado del paso anterior
      * @return Lista con los elementos encontrados.
      */
-    private List<String> toArrayComplex(String tmp,SubcadenaNode nuevoArbol, SubcadenaNode og){
+    private List<String> toArrayComplex(String tmp,SubcadenaNode nuevoArbol){
         List<String> salidas = new ArrayList<>();
         boolean valid = false;
         if(hijos.isEmpty()){
@@ -86,14 +85,13 @@ public class SubcadenaNode {
             SubcadenaNode value = entry.getValue();
             if (value.check) {
                 valid = true;
-                salidas.addAll(value.toArrayComplex(tmp + key,nuevoArbol,og));
+                salidas.addAll(value.toArrayComplex(tmp + key,nuevoArbol));
             }else{
-                System.out.println("(" + tmp + ")KEY: " + key);
                 if(tmp.length() == 1 && !hasValidSon()) {
-                    System.out.println("(" + tmp + ")KEYg: " + key);
-                    addSonRecIni(key, nuevoArbol.addSon(tmp.charAt(0)), tmp.length());
-                }else
-                    addSonRecIni(key,nuevoArbol, tmp.length());
+                    addSonRecIni(key, nuevoArbol.addSon(tmp.charAt(0)));
+                }
+                else
+                    addSonRecIni(key,nuevoArbol);
             }
         }
         if(!valid) {
@@ -134,7 +132,8 @@ public class SubcadenaNode {
             }
         }
         if(!valid)
-            salidas.add(tmp);
+            if(tmp.length() != 1)
+                salidas.add(tmp);
         return salidas;
     }
 }
