@@ -1,38 +1,72 @@
 package problems.subcadenas;
 
-import java.util.Arrays;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
 
 /**
- *
- *
- * Given a array of X number of strings, find the longest common prefix among all strings present in the array.<p>
- *
- * Input:<p>
- * An array of different items. For example: ['pea', 'pear', 'apple', 'for', 'april', 'apendix', 'peace', 1]<p>
- *
- * Output:<p>
- * Print the longest common prefix as a string in the given array. If no such prefix exists print "-1"(without quotes).<p>
- *
- * Example:<p>
- * Input:<p>
- * ['pea', 'pear', 'apple', 'for', 'april', 'apendix', 'peace', 1]<p>
- *
- * Output:<p>
- * ['pea', 'ap']<p>
- *
- * Explanation:<p>
- * Longest common prefix in all the given strings is 'pea'.<p>
- *
- * @see <a href="https://github.com/zero-to-mastery/coding_challenge-21">Fuente</a>
+ * Archivos muy grandes requieren aumentar el tamaño de swap memory:
+ * -Xss2g
  */
 public class BuscarSubcadenas {
-    public static void main(String[] args){
+    public static void main(String[] args) throws IOException {
 
         //TODO Estas dos llamadas se pueden hacer en paralelo
-        longestSubstring(new String[]{"aaaaac","bcbaac","aaa", "aacdbcdd","ddadbjaa"});
+        /*longestSubstring(new String[]{"aaaaac","bcbaac","aaa", "aacdbcdd","ddadbjaa"});
 
         System.out.println("Ejecutando al revés");
-        longestSubstring(new String[]{"caaaaa","caabcb","aaa","ddcbdcaa","aajbdadd"});
+        longestSubstring(new String[]{"caaaaa","caabcb","aaa","ddcbdcaa","aajbdadd"});*/
+
+        String s = readFile("C:\\Users\\diego\\OneDrive\\Desktop\\Comprimir\\quijote.txt",StandardCharsets.UTF_8);
+        //String s = "aacdbaadefaedbeeefsdsadasdasvdbvasdasdnasvdnasvdnbvsandbvasnbdvnasbvdnbasvdnasvdmnasvdnasvdbvasmdbvasmdbvasmdvasamndvasmdnbvasmnda";
+
+        String salida;
+        HashSet<String> set = new HashSet<>();
+        ArrayList<String> list = new ArrayList<>();
+        //2 --> 100%
+        //4 --> 50%
+        //8 --> 25%
+        //int limiteSuperior = s.length()/16;
+        int limiteSuperior = 25;
+        //La palabra mas larga del castellano son 23 letras
+        for(int i = 2; i < limiteSuperior; i++){
+            for(int j=0; j<(s.length()%i); j++) {
+                System.out.printf("%.2f%%\r",100*(((i-2)/(float)(limiteSuperior-1)) + j/(s.length()%i)));
+                longestSubstring(s.substring(j).split("(?<=\\G.{" + i + "})"), set);
+            }
+
+        }
+        System.out.printf("%.2f%%\r",100f);
+
+        list.addAll(set);
+        list.sort((i1, i2) -> Integer.compare(i2.length(), i1.length()));
+        char currentChar = 250;
+        FileWriter myWriter = new FileWriter("C:\\Users\\diego\\OneDrive\\Desktop\\Comprimir\\diccionario.txt");
+        for(int i = 0; i < list.size(); i++) {
+            if(list.get(i).length() == 1)
+                break;
+            if(!s.contains(list.get(i)))
+                continue;
+            myWriter.write(currentChar + ": " + list.get(i) + "\n");
+            salida = s.replace(list.get(i), String.valueOf(currentChar));
+            s = salida;
+            currentChar++;
+        }
+        myWriter.close();
+        try{
+        myWriter = new FileWriter("C:\\Users\\diego\\OneDrive\\Desktop\\Comprimir\\salida.txt");
+        myWriter.write(s);
+        }catch(IOException e){
+            System.out.println(e);
+        }
+
+        myWriter.close();
     }
     /**
      * Ejecuta el problema.<p>
@@ -41,7 +75,7 @@ public class BuscarSubcadenas {
      * @param palabras Vector de palabras sobre las que se busca los prefijos más largos.
      * @return Vector de prefijos más largos.
      */
-    public static String[] longestSubstring(String[] palabras){
+    public static void longestSubstring(String[] palabras, Set<String> set){
         SubcadenaNode padre = new SubcadenaNode();
         SubcadenaNode actual;
         for(String s: palabras) {
@@ -53,16 +87,19 @@ public class BuscarSubcadenas {
         SubcadenaNode nuevoArbol = new SubcadenaNode();
         do {
             String[] a = padre.nextTree(nuevoArbol);
-            if (a.length == 0 || a[0].isEmpty())
+            if (a.length==0 || a[0].isEmpty())
                 break;
-            System.out.println(Arrays.toString(a));
+            set.addAll(Arrays.asList(a));
 
             padre = nuevoArbol;
             nuevoArbol = new SubcadenaNode();
         } while (true);
-
-
-        return null;
     }
 
+    static String readFile(String path, Charset encoding)
+            throws IOException
+    {
+        byte[] encoded = Files.readAllBytes(Paths.get(path));
+        return new String(encoded, encoding);
+    }
 }

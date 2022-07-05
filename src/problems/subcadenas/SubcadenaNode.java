@@ -45,7 +45,7 @@ public class SubcadenaNode {
     private void addSonRec(SubcadenaNode nextTree){
         for (Map.Entry<Character, SubcadenaNode> entry : hijos.entrySet()) {
             Character key = entry.getKey();
-            hijos.get(key).addSonRec(nextTree.addSon(key));
+            nextTree.addSon(key).addSonRec(hijos.get(key));
         }
     }
     private boolean hasValidSon(){
@@ -91,9 +91,8 @@ public class SubcadenaNode {
                     addSonRecIni(key,nuevoArbol);
             }
         }
-        if(!valid && tmp.length() != 1) {
-                salidas.add(tmp);
-        }
+        if(!valid && tmp.length() != 1)
+            salidas.add(tmp);
         return salidas;
     }
 }
