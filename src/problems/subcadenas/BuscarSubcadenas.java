@@ -1,22 +1,27 @@
 package problems.subcadenas;
 
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Archivos muy grandes requieren aumentar el tamaño de swap memory:
  * -Xss2g
  */
-public class BuscarSubcadenas {
-    public static void main(String[] args) throws IOException {
 
+
+public class BuscarSubcadenas {
+
+    private static final int MIN_SIZE = 5;
+
+    public static void main(String[] args) throws IOException {
         //TODO Estas dos llamadas se pueden hacer en paralelo
         /*longestSubstring(new String[]{"aaaaac","bcbaac","aaa", "aacdbcdd","ddadbjaa"});
 
@@ -25,6 +30,8 @@ public class BuscarSubcadenas {
 
         String s = readFile("C:\\Users\\diego\\OneDrive\\Desktop\\Comprimir\\quijote.txt",StandardCharsets.UTF_8);
         //String s = "aacdbaadefaedbeeefsdsadasdasvdbvasdasdnasvdnasvdnbvsandbvasnbdvnasbvdnbasvdnasvdmnasvdnasvdbvasmdbvasmdbvasmdvasamndvasmdnbvasmnda";
+
+        s = s.replaceAll("[\n\r\f]","");
 
         String salida;
         HashSet<String> set = new HashSet<>();
@@ -35,7 +42,7 @@ public class BuscarSubcadenas {
         //int limiteSuperior = s.length()/16;
         int limiteSuperior = 25;
         //La palabra mas larga del castellano son 23 letras
-        for(int i = 2; i < limiteSuperior; i++){
+        for(int i = limiteSuperior-1; i >= MIN_SIZE ; i--){
             for(int j=0; j<(s.length()%i); j++) {
                 System.out.printf("%.2f%%\r",100*(((i-2)/(float)(limiteSuperior-1)) + j/(s.length()%i)));
                 longestSubstring(s.substring(j).split("(?<=\\G.{" + i + "})"), set);
@@ -48,24 +55,34 @@ public class BuscarSubcadenas {
         list.sort((i1, i2) -> Integer.compare(i2.length(), i1.length()));
         char currentChar = 250;
         FileWriter myWriter = new FileWriter("C:\\Users\\diego\\OneDrive\\Desktop\\Comprimir\\diccionario.txt");
+
+        StringBuilder result = new StringBuilder();
+
+        System.out.println("Writing\r");
+        String elem;
         for(int i = 0; i < list.size(); i++) {
-            if(list.get(i).length() == 1)
+            System.out.printf("%.2f%%\r",i/(float)list.size()*100);
+            elem = list.get(i);
+            if(elem.length() < MIN_SIZE)
                 break;
-            if(!s.contains(list.get(i)))
+            if(!s.contains(elem))
                 continue;
-            myWriter.write(currentChar + ": " + list.get(i) + "\n");
-            salida = s.replace(list.get(i), String.valueOf(currentChar));
-            s = salida;
+            //myWriter.write(currentChar + ": " + list.get(i) + "\n");
+            result.append(currentChar)/*.append(": ")*/.append(elem).append("\n");
+            s = s.replace(elem, String.valueOf(currentChar));
             currentChar++;
         }
+
+        myWriter.write(result.toString());
         myWriter.close();
         try{
         myWriter = new FileWriter("C:\\Users\\diego\\OneDrive\\Desktop\\Comprimir\\salida.txt");
         myWriter.write(s);
         }catch(IOException e){
-            System.out.println(e);
+            System.out.println("ERROR"  + e);
         }
 
+        System.out.println("Writed\r");
         myWriter.close();
     }
     /**
