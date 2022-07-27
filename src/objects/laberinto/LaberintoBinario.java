@@ -4,13 +4,16 @@ import exceptions.NotPathFromWallException;
 
 import java.awt.*;
 
-import static objects.laberinto.EstadoLaberinto.NO_RESUELTO;
-import static objects.laberinto.EstadoLaberinto.RESUELTO;
-
 /**
  * @author Diego Fernandez de Valderrama
  */
 public class LaberintoBinario {
+
+    private enum EstadoLaberinto {
+        NO_RESUELTO,
+        RESUELTO
+    }
+
     private static final int NO_PARENT = -1;
 
 
@@ -24,24 +27,24 @@ public class LaberintoBinario {
      * Dado una matriz booleana, en la cual<p>
      * <code>false</code> implica que es una pared del laberinto.<p>
      * <code>true</code> implica que no es una pared del laberinto.<p>
-     *
+     * <p>
      * Genera los datos necesarios para resolver este laberinto.
      *
      * @param laberinto Navegabilidad de las casillas del laberinto.
      */
-    public LaberintoBinario(boolean[][] laberinto){
+    public LaberintoBinario(boolean[][] laberinto) {
         this.pared = laberinto;
-        this.estado = NO_RESUELTO;
+        this.estado = EstadoLaberinto.NO_RESUELTO;
 
-        this.adjacencyMatrix = new int[laberinto.length*laberinto[0].length][laberinto.length*laberinto[0].length];
-        for(int i=0;i<laberinto.length*laberinto[0].length;i++){
-            for(int j=0;j<laberinto.length*laberinto[0].length;j++)
+        this.adjacencyMatrix = new int[laberinto.length * laberinto[0].length][laberinto.length * laberinto[0].length];
+        for (int i = 0; i < laberinto.length * laberinto[0].length; i++) {
+            for (int j = 0; j < laberinto.length * laberinto[0].length; j++)
                 adjacencyMatrix[i][j] = 0;
         }
 
-        for(int i=0;i<laberinto.length;i++){
-            for(int j=0;j<laberinto[0].length;j++){
-                procesaPunto(i,j);
+        for (int i = 0; i < laberinto.length; i++) {
+            for (int j = 0; j < laberinto[0].length; j++) {
+                procesaPunto(i, j);
             }
         }
     }
@@ -56,13 +59,14 @@ public class LaberintoBinario {
      * @throws NotPathFromWallException Si las coordenadas introducidas pertenecen a una casilla que es una pared.
      */
     public LaberintoBinario resuelve(int x, int y) throws NotPathFromWallException {
-        if(!pared[x][y])
-            throw new NotPathFromWallException("La coordenada " +x + ", " + y+" se trata de una pared.");
+        if (!pared[x][y])
+            throw new NotPathFromWallException("La coordenada " + x + ", " + y + " se trata de una pared.");
         this.parents = dijkstra(adjacencyMatrix, coordGlobal(x, y));
-        this.estado = RESUELTO;
+        this.estado = EstadoLaberinto.RESUELTO;
 
         return this;
     }
+
     /**
      * Obtiene todos los caminos mas cortos para llegar a la salida aplicando el algoritmo de dijkstra.<p>
      * Las coordenadas deben pertenecer a un elemento del laberinto que no sea una pared.<p>
@@ -72,10 +76,10 @@ public class LaberintoBinario {
      * @throws NotPathFromWallException Si las coordenadas introducidas pertenecen a una casilla que es una pared.
      */
     public LaberintoBinario resuelve(Point p) throws NotPathFromWallException {
-        if(!pared[p.x][p.y])
-            throw new NotPathFromWallException("La coordenada " +p.x + ", " + p.y+" se trata de una pared.");
+        if (!pared[p.x][p.y])
+            throw new NotPathFromWallException("La coordenada " + p.x + ", " + p.y + " se trata de una pared.");
         this.parents = dijkstra(adjacencyMatrix, coordGlobal(p.x, p.y));
-        this.estado = RESUELTO;
+        this.estado = EstadoLaberinto.RESUELTO;
 
         return this;
     }
@@ -91,10 +95,10 @@ public class LaberintoBinario {
      * @throws NotPathFromWallException Si las coordenadas introducidas pertenecen a una casilla que es una pared.
      */
     public Point[] camino(int x, int y) throws NotPathFromWallException {
-        if(!pared[x][y])
-            throw new NotPathFromWallException("La coordenada " +x + ", " + y+" se trata de una pared.");
+        if (!pared[x][y])
+            throw new NotPathFromWallException("La coordenada " + x + ", " + y + " se trata de una pared.");
         Point[] resultado = null;
-        if(this.estado == RESUELTO) {
+        if (this.estado == EstadoLaberinto.RESUELTO) {
             int curr = coordGlobal(x, y);
             resultado = new Point[shortestDistances[coordGlobal(x, y)] + 1];
             resultado[0] = new Point(x, y);
@@ -116,10 +120,10 @@ public class LaberintoBinario {
      * @throws NotPathFromWallException Si las coordenadas introducidas pertenecen a una casilla que es una pared.
      */
     public Point[] camino(Point p) throws NotPathFromWallException {
-        if(!pared[p.x][p.y])
+        if (!pared[p.x][p.y])
             throw new NotPathFromWallException("La coordenada " + p.x + ", " + p.y + " se trata de una pared.");
         Point[] resultado = null;
-        if(this.estado == RESUELTO) {
+        if (this.estado == EstadoLaberinto.RESUELTO) {
             int curr = coordGlobal(p.x, p.y);
             resultado = new Point[shortestDistances[coordGlobal(p.x, p.y)] + 1];
             resultado[0] = new Point(p.x, p.y);
@@ -137,35 +141,36 @@ public class LaberintoBinario {
      * @param x Coordenada X
      * @param y Coordenada Y
      */
-    private void procesaPunto(int x, int y){
-        if(pared[x][y]) {
-            if (y < pared[0].length - 1 && pared[x][y+1]){
-                adjacencyMatrix[coordGlobal(x,y)][coordGlobal(x,y+1)] = 1;
-                adjacencyMatrix[coordGlobal(x,y+1)][coordGlobal(x,y)] = 1;
+    private void procesaPunto(int x, int y) {
+        if (pared[x][y]) {
+            if (y < pared[0].length - 1 && pared[x][y + 1]) {
+                adjacencyMatrix[coordGlobal(x, y)][coordGlobal(x, y + 1)] = 1;
+                adjacencyMatrix[coordGlobal(x, y + 1)][coordGlobal(x, y)] = 1;
             }
-            if (x < pared.length - 1 && pared[x+1][y]){
-                adjacencyMatrix[coordGlobal(x,y)][coordGlobal(x+1,y)] = 1;
-                adjacencyMatrix[coordGlobal(x+1,y)][coordGlobal(x,y)] = 1;
+            if (x < pared.length - 1 && pared[x + 1][y]) {
+                adjacencyMatrix[coordGlobal(x, y)][coordGlobal(x + 1, y)] = 1;
+                adjacencyMatrix[coordGlobal(x + 1, y)][coordGlobal(x, y)] = 1;
             }
         }
     }
 
-    private int coordGlobal(int x, int y){
-        return x*pared.length + y;
+    private int coordGlobal(int x, int y) {
+        return x * pared.length + y;
     }
 
-    private Point traduceCoord(int coordGlobal){
-        return new Point((coordGlobal/pared.length), coordGlobal%pared.length);
+    private Point traduceCoord(int coordGlobal) {
+        return new Point((coordGlobal / pared.length), coordGlobal % pared.length);
     }
 
     /**
      * Convierte la matriz de booleanos a string <p>
      * ◼ : Navegable <p>
      * ◻ :Pared
+     *
      * @return String del laberinto
      */
     @Override
-    public String toString(){
+    public String toString() {
         StringBuilder sb = new StringBuilder();
         for (boolean[] booleans : pared) {
             for (boolean aBoolean : booleans) {
@@ -183,8 +188,9 @@ public class LaberintoBinario {
     /**
      * Funcion que haya el camino mas corto a un punto, mediante el algoritmo de dijkstra<p>
      * Esta version se basa en la matriz de adyacencia.
+     *
      * @param adjacencyMatrix Matriz de adyacencia
-     * @param startVertex Punto al que se le buscan los caminos mas cortos
+     * @param startVertex     Punto al que se le buscan los caminos mas cortos
      * @return Vector con todos los caminos mas cortos hasta <code>startVertex</code>
      */
     private static int[] dijkstra(int[][] adjacencyMatrix, int startVertex) {
@@ -221,8 +227,7 @@ public class LaberintoBinario {
 
         // Find shortest path for all
         // vertices
-        for (int i = 1; i < nVertices; i++)
-        {
+        for (int i = 1; i < nVertices; i++) {
 
             // Pick the minimum distance vertex
             // from the set of vertices not yet
@@ -231,10 +236,8 @@ public class LaberintoBinario {
             // first iteration.
             int nearestVertex = -1;
             int shortestDistance = Integer.MAX_VALUE;
-            for (int vertexIndex = 0; vertexIndex < nVertices; vertexIndex++)
-            {
-                if (!added[vertexIndex] && shortestDistances[vertexIndex] < shortestDistance)
-                {
+            for (int vertexIndex = 0; vertexIndex < nVertices; vertexIndex++) {
+                if (!added[vertexIndex] && shortestDistances[vertexIndex] < shortestDistance) {
                     nearestVertex = vertexIndex;
                     shortestDistance = shortestDistances[vertexIndex];
                 }
@@ -243,7 +246,7 @@ public class LaberintoBinario {
             // Mark the picked vertex as
             // processed
 
-            if(nearestVertex == -1)
+            if (nearestVertex == -1)
                 continue;
             added[nearestVertex] = true;
 
@@ -253,8 +256,7 @@ public class LaberintoBinario {
             for (int vertexIndex = 0; vertexIndex < nVertices; vertexIndex++) {
                 int edgeDistance = adjacencyMatrix[nearestVertex][vertexIndex];
 
-                if (edgeDistance > 0 && ((shortestDistance + edgeDistance) < shortestDistances[vertexIndex]))
-                {
+                if (edgeDistance > 0 && ((shortestDistance + edgeDistance) < shortestDistances[vertexIndex])) {
                     parents[vertexIndex] = nearestVertex;
                     shortestDistances[vertexIndex] = shortestDistance + edgeDistance;
                 }

@@ -28,10 +28,10 @@ public class BuscarSubcadenas {
         System.out.println("Ejecutando al revés");
         longestSubstring(new String[]{"caaaaa","caabcb","aaa","ddcbdcaa","aajbdadd"});*/
 
-        String s = readFile("C:\\Users\\diego\\OneDrive\\Desktop\\Comprimir\\quijote.txt",StandardCharsets.UTF_8);
+        String s = readFile("C:\\Users\\diego\\OneDrive\\Desktop\\Comprimir\\quijote.txt", StandardCharsets.UTF_8);
         //String s = "aacdbaadefaedbeeefsdsadasdasvdbvasdasdnasvdnasvdnbvsandbvasnbdvnasbvdnbasvdnasvdmnasvdnasvdbvasmdbvasmdbvasmdvasamndvasmdnbvasmnda";
 
-        s = s.replaceAll("[\n\r\f]","");
+        s = s.replaceAll("[\n\r\f]", "");
 
         String salida;
         HashSet<String> set = new HashSet<>();
@@ -42,14 +42,14 @@ public class BuscarSubcadenas {
         //int limiteSuperior = s.length()/16;
         int limiteSuperior = 25;
         //La palabra mas larga del castellano son 23 letras
-        for(int i = limiteSuperior-1; i >= MIN_SIZE ; i--){
-            for(int j=0; j<(s.length()%i); j++) {
-                System.out.printf("%.2f%%\r",100*(((i-2)/(float)(limiteSuperior-1)) + j/(s.length()%i)));
+        for (int i = limiteSuperior - 1; i >= MIN_SIZE; i--) {
+            for (int j = 0; j < (s.length() % i); j++) {
+                System.out.printf("%.2f%%\r", 100 * (((i - 2) / (float) (limiteSuperior - 1)) + j / (s.length() % i)));
                 longestSubstring(s.substring(j).split("(?<=\\G.{" + i + "})"), set);
             }
 
         }
-        System.out.printf("%.2f%%\r",100f);
+        System.out.printf("%.2f%%\r", 100f);
 
         list.addAll(set);
         list.sort((i1, i2) -> Integer.compare(i2.length(), i1.length()));
@@ -60,12 +60,12 @@ public class BuscarSubcadenas {
 
         System.out.println("Writing\r");
         String elem;
-        for(int i = 0; i < list.size(); i++) {
-            System.out.printf("%.2f%%\r",i/(float)list.size()*100);
+        for (int i = 0; i < list.size(); i++) {
+            System.out.printf("%.2f%%\r", i / (float) list.size() * 100);
             elem = list.get(i);
-            if(elem.length() < MIN_SIZE)
+            if (elem.length() < MIN_SIZE)
                 break;
-            if(!s.contains(elem))
+            if (!s.contains(elem))
                 continue;
             //myWriter.write(currentChar + ": " + list.get(i) + "\n");
             result.append(currentChar)/*.append(": ")*/.append(elem).append("\n");
@@ -75,27 +75,29 @@ public class BuscarSubcadenas {
 
         myWriter.write(result.toString());
         myWriter.close();
-        try{
-        myWriter = new FileWriter("C:\\Users\\diego\\OneDrive\\Desktop\\Comprimir\\salida.txt");
-        myWriter.write(s);
-        }catch(IOException e){
-            System.out.println("ERROR"  + e);
+        try {
+            myWriter = new FileWriter("C:\\Users\\diego\\OneDrive\\Desktop\\Comprimir\\salida.txt");
+            myWriter.write(s);
+        } catch (IOException e) {
+            System.out.println("ERROR" + e);
         }
 
         System.out.println("Writed\r");
         myWriter.close();
     }
+
     /**
      * Ejecuta el problema.<p>
      * La complejidad de esta resolución se estima de <code>O(n^2ln(n))</code>.<p>
      * Este dato es puramente especulativo.
+     *
      * @param palabras Vector de palabras sobre las que se busca los prefijos más largos.
      * @return Vector de prefijos más largos.
      */
-    public static void longestSubstring(String[] palabras, Set<String> set){
+    public static void longestSubstring(String[] palabras, Set<String> set) {
         SubcadenaNode padre = new SubcadenaNode();
         SubcadenaNode actual;
-        for(String s: palabras) {
+        for (String s : palabras) {
             actual = padre;
             for (int c = 0; c < s.length(); c++) {
                 actual = actual.addSon(s.charAt(c));
@@ -104,7 +106,7 @@ public class BuscarSubcadenas {
         SubcadenaNode nuevoArbol = new SubcadenaNode();
         do {
             String[] a = padre.nextTree(nuevoArbol);
-            if (a.length==0 || a[0].isEmpty())
+            if (a.length == 0 || a[0].isEmpty())
                 break;
             set.addAll(Arrays.asList(a));
 
@@ -114,8 +116,7 @@ public class BuscarSubcadenas {
     }
 
     static String readFile(String path, Charset encoding)
-            throws IOException
-    {
+            throws IOException {
         byte[] encoded = Files.readAllBytes(Paths.get(path));
         return new String(encoded, encoding);
     }

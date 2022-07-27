@@ -1,7 +1,7 @@
 package problemasADA.tema2;
 
 public class Sudoku {
-    public static void main(String[] args){
+    public static void main(String[] args) {
         int[][] tablero = new int[9][9];
         tablero[0][0] = 5;
         tablero[0][1] = 3;
@@ -48,7 +48,7 @@ public class Sudoku {
         printMatrix(tablero);
     }
 
-    public static void printMatrix(int[][] matrix){
+    public static void printMatrix(int[][] matrix) {
         for (int[] ints : matrix) {
             for (int anInt : ints) {
                 System.out.print(anInt + " ");
@@ -60,15 +60,16 @@ public class Sudoku {
     /**
      * Para una matriz dada 9x9, siendo las casillas vacias 0<p>
      * completa el sudoku.
+     *
      * @param tablero Tablero 9x9 de Sudoku.
      */
-    public static void solveSudoku(int[][] tablero){
+    public static void solveSudoku(int[][] tablero) {
         int candidato;
-        for(int fila = 0; fila < tablero.length; fila++) {
-            for(int columna = 0; columna < tablero[fila].length; columna++) {
-                candidato = calcularPosibilidades(tablero,fila, columna);
-                if(candidato != -1)
-                    llenarCasilla(tablero,fila,columna,candidato);
+        for (int fila = 0; fila < tablero.length; fila++) {
+            for (int columna = 0; columna < tablero[fila].length; columna++) {
+                candidato = calcularPosibilidades(tablero, fila, columna);
+                if (candidato != -1)
+                    llenarCasilla(tablero, fila, columna, candidato);
             }
         }
     }
@@ -79,27 +80,28 @@ public class Sudoku {
      * <p>
      * Una vez resuelto, mediante recursividad va llamando a las casillas influenciadas por las<p>
      * casillas ya cambiadas, asi asta resolver el Sudoku.<p>
+     *
      * @param tablero Tablero 9x9 de Sudoku.
-     * @param fila Fila en la que se encuentra la casilla a llenar.
+     * @param fila    Fila en la que se encuentra la casilla a llenar.
      * @param columna Columna en la que se encuentra la casilla a llenar.
-     * @param valor Valor a introducir en la casilla.
+     * @param valor   Valor a introducir en la casilla.
      */
-    private static void llenarCasilla(int[][] tablero, int fila, int columna, int valor){
+    private static void llenarCasilla(int[][] tablero, int fila, int columna, int valor) {
         tablero[fila][columna] = valor;
         int candidato;
-        for(int f = 0; f < tablero.length; f++) {
+        for (int f = 0; f < tablero.length; f++) {
             candidato = calcularPosibilidades(tablero, f, columna);
             if (candidato != -1)
                 llenarCasilla(tablero, f, columna, candidato);
         }
-        for(int c = 0; c < tablero.length; c++){
+        for (int c = 0; c < tablero.length; c++) {
             candidato = calcularPosibilidades(tablero, fila, c);
             if (candidato != -1)
                 llenarCasilla(tablero, fila, c, candidato);
         }
 
-        for(int f = fila-fila%3; f < fila-fila%3 + 3; f++)
-            for(int c = columna-columna%3; c < columna-columna%3 + 3; c++){
+        for (int f = fila - fila % 3; f < fila - fila % 3 + 3; f++)
+            for (int c = columna - columna % 3; c < columna - columna % 3 + 3; c++) {
                 candidato = calcularPosibilidades(tablero, f, c);
                 if (candidato != -1)
                     llenarCasilla(tablero, f, c, candidato);
@@ -111,17 +113,18 @@ public class Sudoku {
      * posible, y de ser asi lo devuelve.<p>
      * <p>
      * Si hay mas de un valor posible la ejeuccion se detiene y devuelve un <code>-1</code>.<p>
+     *
      * @param tablero Tablero 9x9 de Sudoku.
-     * @param fila Fila en la que se encuentra la casilla a comprobar.
+     * @param fila    Fila en la que se encuentra la casilla a comprobar.
      * @param columna Columna en la que se encuentra la casilla a comprobar.
      * @return Valor a introducir en la casilla, en caso de haber mas de un candidato, devuevle <code>-1</code>
      */
-    private static int calcularPosibilidades(int[][] tablero, int fila, int columna){
-        if(tablero[fila][columna] != 0)
+    private static int calcularPosibilidades(int[][] tablero, int fila, int columna) {
+        if (tablero[fila][columna] != 0)
             return -1;
         int candidato = 0;
 
-        for(int i = 1; i <= 9; i++){
+        for (int i = 1; i <= 9; i++) {
             boolean esta = false;
             for (int[] ints : tablero)
                 if (ints[columna] == i) {
@@ -129,24 +132,24 @@ public class Sudoku {
                     break;
                 }
 
-            if(!esta)
-                for(int c = 0; c < tablero.length; c++)
-                    if(tablero[fila][c] == i){
+            if (!esta)
+                for (int c = 0; c < tablero.length; c++)
+                    if (tablero[fila][c] == i) {
                         esta = true;
                         break;
                     }
 
-            if(!esta)
-                for(int f = fila-fila%3; f < fila-fila%3 + 3; f++)
-                    for(int c = columna-columna%3; c < columna-columna%3 + 3; c++){
-                        if(tablero[f][c] == i){
+            if (!esta)
+                for (int f = fila - fila % 3; f < fila - fila % 3 + 3; f++)
+                    for (int c = columna - columna % 3; c < columna - columna % 3 + 3; c++) {
+                        if (tablero[f][c] == i) {
                             esta = true;
                             break;
                         }
                     }
 
-            if(!esta) {
-                if(candidato != 0)
+            if (!esta) {
+                if (candidato != 0)
                     return -1;
                 candidato = i;
             }
