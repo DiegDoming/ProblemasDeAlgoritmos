@@ -1,8 +1,13 @@
 package objects.laberinto;
 
+import exceptions.NotPathFromWallException;
+
 import java.awt.*;
 import java.util.Random;
 
+/**
+ * @author Diego Fernandez de Valderrama
+ */
 public class GeneradorLaberinto {
 
 
@@ -16,30 +21,44 @@ public class GeneradorLaberinto {
     private final Point end;
     private final int[][] maze;
 
-
+    /**
+     * Dadas una dimensiones, una entrada y una salida genera una matriz booleana, en la cual<p>
+     * <code>false</code> implica que es una pared del laberinto.<p>
+     * <code>true</code> implica que no es una pared del laberinto.<p>
+     * La cual tiene un camino aleatorio desde <code>ini</code> a <code>end</code>
+     *
+     * @param row Filas del laberinto
+     * @param col Columnas del laberinto
+     * @param ini Coordenada de la entrada del laberinto
+     * @param end Coordenada de la salida del laberinto
+     * @throws IllegalArgumentException si <code>row</code> es menor que 0
+     * @throws IllegalArgumentException si <code>col</code> es menor que 0
+     * @throws IllegalArgumentException si <code>ini</code> esta fuera del laberinto o es una esquina del este.
+     * @throws IllegalArgumentException si <code>end</code> esta fuera del laberinto o es una esquina del este.
+     */
     public GeneradorLaberinto(int row, int col, Point ini, Point end) {
 
-        if(row <= 0)
+        if (row <= 0)
             throw new IllegalArgumentException("row must be positive");
-        if(col <= 0)
+        if (col <= 0)
             throw new IllegalArgumentException("col must be positive");
 
         this.row = row;
         this.col = col;
 
-        if(ini == null)
+        if (ini == null)
             throw new NullPointerException();
 
-        if(end == null)
+        if (end == null)
             throw new NullPointerException();
 
-        if(checkPoint(ini))
+        if (checkPoint(ini))
             throw new IllegalArgumentException("Ini must be contained in row and col");
-        if(checkPoint(end))
+        if (checkPoint(end))
             throw new IllegalArgumentException("End must be contained in row and col");
-        if(checkCorner(ini))
+        if (checkCorner(ini))
             throw new IllegalArgumentException("Ini cannot be a corner");
-        if(checkCorner(end))
+        if (checkCorner(end))
             throw new IllegalArgumentException("End cannot be a corner");
 
         maze = new int[row][col];
@@ -53,57 +72,52 @@ public class GeneradorLaberinto {
         maze[end.x][end.y] = -1;
     }
 
-    private boolean checkPoint(Point point) {
-        return point.x < 0 || point.x >= row || point.y < 0 || point.y >= col;
-    }
-
-    private boolean checkCorner(Point point){
-        return (point.x == 0 && point.y == 0) || (point.x == row-1 && point.y == 0) || (point.x == 0 && point.y == col -1) || (point.x == row-1 && point.y == col-1);
-    }
-
     /**
      * Dado una matriz booleana, en la cual<p>
      * <code>false</code> implica que es una pared del laberinto.<p>
-     * <code>true</code> implica que no es una pared del laberinto.<p>
+     * <code>true</code> implica que no es una pared del laberinto.<br>
      * <p>
      * Genera los datos necesarios para ramificar este laberinto.
-     * Las coordenadas de la matriz booleana dada, nunca se conectarán entre sí mediante pasillos generados.
+     * Las coordenadas de la matriz booleana dada, nunca se conectaran entre si mediante pasillos generados.
      *
      * @param laberinto Navegabilidad de las casillas del laberinto.
+     * @param ini       Coordenada de la entrada del laberinto
+     * @param end       Coordenada de la salida del laberinto
+     * @throws IllegalArgumentException si <code>ini</code> esta fuera del laberinto o es una esquina del este.
+     * @throws IllegalArgumentException si <code>end</code> esta fuera del laberinto o es una esquina del este.
      */
     public GeneradorLaberinto(boolean[][] laberinto, Point ini, Point end) {
 
-        if(laberinto == null)
+        if (laberinto == null)
             throw new NullPointerException();
 
-        if(ini == null)
+        if (ini == null)
             throw new NullPointerException();
 
-        if(end == null)
+        if (end == null)
             throw new NullPointerException();
 
         row = laberinto.length;
         col = laberinto[0].length;
 
-        if(checkPoint(ini))
+        if (checkPoint(ini))
             throw new IllegalArgumentException("Ini must be contained in row and col");
-        if(checkPoint(end))
+        if (checkPoint(end))
             throw new IllegalArgumentException("End must be contained in row and col");
-        if(checkCorner(ini))
+        if (checkCorner(ini))
             throw new IllegalArgumentException("Ini cannot be a corner");
-        if(checkCorner(end))
+        if (checkCorner(end))
             throw new IllegalArgumentException("End cannot be a corner");
 
+        if (!laberinto[ini.x][ini.y])
+            throw new IllegalArgumentException("Ini is cannot be a wall");
+
+        if (!laberinto[end.x][end.y])
+            throw new IllegalArgumentException("End is cannot be a wall");
+
         maze = new int[row][col];
-        int current = -1;
-        for (int i = 0; i < row; i++) {
-            for (int j = 0; j < col; j++) {
-                if (laberinto[i][j])
-                    maze[i][j] = current--;
-                else
-                    maze[i][j] = WALL;
-            }
-        }
+
+        convertMaze(laberinto);
 
         this.end = end;
         this.ini = ini;
@@ -127,11 +141,51 @@ public class GeneradorLaberinto {
     }
 
     /**
-     * Ramifica el laberinto para una profundidad maxima de <code>maxDepth</code><p>
+     * Resuelve el laberinto generado
+     *
+     * @return Coordenadas Vector con el camino mas corto
+     */
+    public Point[] solve() {
+        LaberintoBinario bin = new LaberintoBinario(getLaberinto());
+
+        //En este caso el error no deberia darse nunca
+        //De darse hay un error en el propio codigo de esta clase.
+        try {
+            return bin.resuelve(end).camino(ini);
+        } catch (NotPathFromWallException e) {
+            e.printStackTrace();
+        }
+
+        return new Point[0];
+    }
+
+    private boolean checkPoint(Point point) {
+        return point.x < 0 || point.x >= row || point.y < 0 || point.y >= col;
+    }
+
+    private boolean checkCorner(Point point) {
+        return (point.x == 0 && point.y == 0) || (point.x == row - 1 && point.y == 0) || (point.x == 0 && point.y == col - 1) || (point.x == row - 1 && point.y == col - 1);
+    }
+
+    private void convertMaze(boolean[][] laberinto){
+        int current = -1;
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                if (laberinto[i][j])
+                    maze[i][j] = current--;
+                else
+                    maze[i][j] = WALL;
+            }
+        }
+    }
+
+
+    /**
+     * Ramifica el laberinto para una profundidad maxima de <code>maxDepth</code><br>
      *
      * @param maxDepth Profundidad maxima a la que el laberinto ramificara.
      */
-    public void generateLabyrinth(int maxDepth) {
+    public void ramifica(int maxDepth) {
         if (BORDER < 1)
             return;
 
@@ -225,43 +279,44 @@ public class GeneradorLaberinto {
     private Point processPoint(int x, int y) {
         int current = Math.abs(maze[x][y]);
         switch (ran(3)) {
-            case 0 -> {
+            case 0 :
                 if (x + 1 < row && validPoint(current, x + 1, y)) {
                     maze[x + 1][y] = current;
                     return new Point(x + 1, y);
                 }
-            }
-            case 1 -> {
+                break;
+            case 1 :
                 if (x - 1 >= 0 && validPoint(current, x - 1, y)) {
                     maze[x - 1][y] = current;
                     return new Point(x - 1, y);
                 }
-            }
-            case 2 -> {
+                break;
+            case 2 :
                 if (y + 1 < col && validPoint(current, x, y + 1)) {
                     maze[x][y + 1] = current;
                     return new Point(x, y + 1);
                 }
-            }
-            case 3 -> {
+                break;
+            case 3 :
                 if (y - 1 >= 0 && validPoint(current, x, y - 1)) {
                     maze[x][y - 1] = current;
                     return new Point(x, y - 1);
                 }
-            }
-            default -> throw new IllegalStateException("Unexpected value: " + ran(3));
+                break;
+            default:
+                break;
         }
 
         return new Point(x, y);
     }
 
     /**
-     * Comprueba si un punto es válido para la generación
+     * Comprueba si un punto es valido para la generacion
      *
      * @param current Valor del pasillo actual
      * @param x       Coordenada X
      * @param y       Coordenada Y
-     * @return Resultado de la comprobación
+     * @return Resultado de la comprobacion
      */
     private boolean validPoint(int current, int x, int y) {
 
@@ -282,11 +337,11 @@ public class GeneradorLaberinto {
     }
 
     /**
-     * Comprueba si la casilla actual está rodeada por 3 muros
+     * Comprueba si la casilla actual esta rodeada por 3 muros
      *
      * @param x Coordenada X
      * @param y Coordenada Y
-     * @return Resultado de la comprobación
+     * @return Resultado de la comprobacion
      */
     private boolean checkWalls(int x, int y) {
         return checkAround(x, y, WALL) == 3;
@@ -295,10 +350,10 @@ public class GeneradorLaberinto {
     /**
      * Comprueba si la casilla actual, esa rodeada solo por elementos iguales a <code>current</code>
      *
-     * @param current Elemento al que igualarse para la comprobación
+     * @param current Elemento al que igualarse para la comprobacion
      * @param x       Coordenada X
      * @param y       Coordenada Y
-     * @return Resultado de la comprobación
+     * @return Resultado de la comprobacion
      */
     private boolean checkNeighbor(int current, int x, int y) {
         return checkAround(x, y, current) != 4;
@@ -309,8 +364,8 @@ public class GeneradorLaberinto {
      *
      * @param x     Coordenada X
      * @param y     Coordenada Y
-     * @param value Elemento al que igualarse en la comprobación
-     * @return Número de casillas iguales a <code>value</code>
+     * @param value Elemento al que igualarse en la comprobacion
+     * @return Numero de casillas iguales a <code>value</code>
      */
     private int checkAround(int x, int y, int value) {
         int count = 0;
@@ -327,12 +382,12 @@ public class GeneradorLaberinto {
     }
 
     /**
-     * Comprueba si la conversión de esta casilla a pasillo, produciría un área de 2x2.
+     * Comprueba si la conversion de esta casilla a pasillo, produciria un area de 2x2.
      *
      * @param current Valor del pasillo actual
      * @param x       Coordenada X
      * @param y       Coordenada Y
-     * @return Resultado de la comprobación
+     * @return Resultado de la comprobacion
      */
     private boolean checkNoBigBox(int current, int x, int y) {
         if (maze[x + 1][y] == current && maze[x][y + 1] == current && maze[x + 1][y + 1] == current)
@@ -360,10 +415,10 @@ public class GeneradorLaberinto {
 
     /**
      * Convierte la matriz de booleanos a string <p>
-     * ◼ : Navegable <p>
-     * ⚫ : Entrada <p>
-     * ✪ : Salida <p>
-     * ◻ :Pared
+     * &#x25FC; : Navegable <p>
+     * &#x26AB; : Entrada <p>
+     * &#x272A; : Salida <p>
+     * &#x25FB; :Pared
      *
      * @return String del laberinto
      */
@@ -372,7 +427,7 @@ public class GeneradorLaberinto {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < row; i++) {
             for (int j = 0; j < col; j++) {
-                sb.append(pointToChar(i,j));
+                sb.append(pointToChar(i, j));
             }
             sb.append("\n");
         }
@@ -380,15 +435,15 @@ public class GeneradorLaberinto {
         return sb.toString();
     }
 
-    private char pointToChar(int x, int y){
+    private char pointToChar(int x, int y) {
         if (x == ini.x && y == ini.y)
-            return '⚫';
+            return '\u26AB';
         if (x == end.x && y == end.y)
-            return '✪';
+            return '\u272A';
         if (maze[x][y] == WALL)
-            return '◻';
-        else
-            return'◼';
+            return '\u25FB';
+
+        return '\u25FC';
     }
 
 }

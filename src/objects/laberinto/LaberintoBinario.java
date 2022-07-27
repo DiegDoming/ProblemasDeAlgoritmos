@@ -26,7 +26,7 @@ public class LaberintoBinario {
     /**
      * Dado una matriz booleana, en la cual<p>
      * <code>false</code> implica que es una pared del laberinto.<p>
-     * <code>true</code> implica que no es una pared del laberinto.<p>
+     * <code>true</code> implica que no es una pared del laberinto.<br>
      * <p>
      * Genera los datos necesarios para resolver este laberinto.
      *
@@ -51,7 +51,7 @@ public class LaberintoBinario {
 
     /**
      * Obtiene todos los caminos mas cortos para llegar a la salida aplicando el algoritmo de dijkstra.<p>
-     * Las coordenadas deben pertenecer a un elemento del laberinto que no sea una pared.<p>
+     * Las coordenadas deben pertenecer a un elemento del laberinto que no sea una pared.<br>
      *
      * @param x Coordenada X de la salida del laberinto
      * @param y Coordenada Y de la salida del laberinto
@@ -69,7 +69,7 @@ public class LaberintoBinario {
 
     /**
      * Obtiene todos los caminos mas cortos para llegar a la salida aplicando el algoritmo de dijkstra.<p>
-     * Las coordenadas deben pertenecer a un elemento del laberinto que no sea una pared.<p>
+     * Las coordenadas deben pertenecer a un elemento del laberinto que no sea una pared.<br>
      *
      * @param p Coordenadas de la salida del laberinto
      * @return El propio objeto, por conveniencia operacional
@@ -85,7 +85,7 @@ public class LaberintoBinario {
     }
 
     /**
-     * Obtiene el camino mas corto a la salida, desde una posición dada<p>
+     * Obtiene el camino mas corto a la salida, desde una posicion dada<p>
      * Para esto requiere, que se haya establecido previamente la salida con <code>resuelve()</code><p>
      * El formato de la salida es un vector, con la serie de pasos a tomar.
      *
@@ -111,7 +111,7 @@ public class LaberintoBinario {
     }
 
     /**
-     * Obtiene el camino mas corto a la salida, desde una posición dada<p>
+     * Obtiene el camino mas corto a la salida, desde una posicion dada<p>
      * Para esto requiere, que se haya establecido previamente la salida con <code>resuelve()</code><p>
      * El formato de la salida es un vector, con la serie de pasos a tomar.
      *
@@ -164,8 +164,8 @@ public class LaberintoBinario {
 
     /**
      * Convierte la matriz de booleanos a string <p>
-     * ◼ : Navegable <p>
-     * ◻ :Pared
+     * &#x25FC; : Navegable <p>
+     * &#x25FB; :Pared
      *
      * @return String del laberinto
      */
