@@ -1,69 +1,22 @@
 package problemasADA.tema2;
 
 public class Sudoku {
-    public static void main(String[] args) {
-        int[][] tablero = new int[9][9];
-        tablero[0][0] = 5;
-        tablero[0][1] = 3;
-        tablero[0][4] = 7;
-
-        tablero[1][0] = 6;
-        tablero[1][3] = 1;
-        tablero[1][4] = 9;
-        tablero[1][5] = 5;
-
-        tablero[2][1] = 9;
-        tablero[2][2] = 8;
-        tablero[2][7] = 6;
-
-        tablero[3][0] = 8;
-        tablero[3][4] = 6;
-        tablero[3][8] = 3;
-
-        tablero[4][0] = 4;
-        tablero[4][3] = 8;
-        tablero[4][5] = 3;
-        tablero[4][8] = 1;
-
-        tablero[5][0] = 7;
-        tablero[5][4] = 2;
-        tablero[5][8] = 6;
-
-        tablero[6][1] = 6;
-        tablero[6][6] = 2;
-        tablero[6][7] = 8;
-
-        tablero[7][3] = 4;
-        tablero[7][4] = 1;
-        tablero[7][5] = 9;
-        tablero[7][8] = 5;
-
-        tablero[8][4] = 8;
-        tablero[8][7] = 7;
-        tablero[8][8] = 9;
-
-        printMatrix(tablero);
-        solveSudoku(tablero);
-        System.out.println();
-        printMatrix(tablero);
-    }
-
-    public static void printMatrix(int[][] matrix) {
-        for (int[] ints : matrix) {
-            for (int anInt : ints) {
-                System.out.print(anInt + " ");
-            }
-            System.out.println();
-        }
-    }
-
     /**
      * Para una matriz dada 9x9, siendo las casillas vacias 0<p>
      * completa el sudoku.
      *
      * @param tablero Tablero 9x9 de Sudoku.
      */
-    public static void solveSudoku(int[][] tablero) {
+    public static void solve(int[][] tablero) {
+        if(tablero == null)
+            throw new NullPointerException();
+        if(tablero.length != 9 || tablero[0].length != 9)
+            throw new IllegalArgumentException("Matrix bust be 9x9");
+
+        if(!validBoard(tablero))
+            throw new IllegalArgumentException("Values must be in range");
+
+
         int candidato;
         for (int fila = 0; fila < tablero.length; fila++) {
             for (int columna = 0; columna < tablero[fila].length; columna++) {
@@ -72,6 +25,14 @@ public class Sudoku {
                     llenarCasilla(tablero, fila, columna, candidato);
             }
         }
+    }
+
+    private static boolean validBoard(int[][] tablero){
+        for(int[] i: tablero)
+            for(int j: i)
+                if(j<0 || j>9)
+                    return false;
+        return true;
     }
 
     /**
