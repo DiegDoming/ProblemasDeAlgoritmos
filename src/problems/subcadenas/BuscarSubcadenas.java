@@ -28,7 +28,7 @@ public class BuscarSubcadenas {
         System.out.println("Ejecutando al revés");
         longestSubstring(new String[]{"caaaaa","caabcb","aaa","ddcbdcaa","aajbdadd"});*/
 
-        String s = readFile("C:\\Users\\diego\\OneDrive\\Desktop\\Comprimir\\quijote.txt", StandardCharsets.UTF_8);
+        String s = readFile("C:\\Users\\diego\\OneDrive\\Desktop\\Comprimir\\rew.pdf", StandardCharsets.UTF_8);
         //String s = "aacdbaadefaedbeeefsdsadasdasvdbvasdasdnasvdnasvdnbvsandbvasnbdvnasbvdnbasvdnasvdmnasvdnasvdbvasmdbvasmdbvasmdvasamndvasmdnbvasmnda";
 
         s = s.replaceAll("[\n\r\f]", "");
@@ -40,7 +40,7 @@ public class BuscarSubcadenas {
         //4 --> 50%
         //8 --> 25%
         //int limiteSuperior = s.length()/16;
-        int limiteSuperior = 25;
+        int limiteSuperior = 50;
         //La palabra mas larga del castellano son 23 letras
         for (int i = limiteSuperior - 1; i >= MIN_SIZE; i--) {
             for (int j = 0; j < (s.length() % i); j++) {
