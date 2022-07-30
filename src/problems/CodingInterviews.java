@@ -2,6 +2,7 @@ package problems;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 
@@ -190,7 +191,8 @@ public class CodingInterviews {
 
 
     /**
-     *  Given a singly linked list of integers l and an integer k, remove all elements from list l that have a value equal to k
+     * Given a singly linked list of integers l and an integer k, remove all elements from list l that have a value equal to k
+     *
      * @param l A singly linked list of integers.
      * @param k An integer.
      * @return Return l with all the values equal to k removed.
@@ -225,4 +227,30 @@ public class CodingInterviews {
         final T value;
         ListNode<T> next;
     }
+
+    /**
+     * You have a collection of coins, and you know the values of the coins and the quantity of each <br>
+     * type of coin in it. You want to know how many distinct sums you can make from non-empty groupings of these coins.
+     * @param coins An array containing the values of the coins in your collection.
+     * @param quantity An array containing the quantity of each type of coin in your collection. quantity[i] indicates the number of coins that have a value of coins[i].
+     * @return The number of different possible sums that can be created from non-empty groupings of your coins.
+     */
+    public int possibleSums(int[] coins, int[] quantity) {
+        HashSet<Integer> set = new HashSet<>();
+
+        for (int i = 0; i < coins.length; i++)
+            for (int j = 1; j <= quantity[i]; j++)
+                possibleSumsstep(i + 1, coins[i] * j, coins, quantity, set);
+
+        return set.size();
+    }
+
+    private void possibleSumsstep(int index, int total, int[] coins, int[] quantity, HashSet<Integer> set) {
+        set.add(total);
+        for (int i = index; i < coins.length; i++) {
+            for (int j = 1; j <= quantity[i]; j++)
+                possibleSumsstep(i + 1, total + (coins[i] * j), coins, quantity, set);
+        }
+    }
+
 }
